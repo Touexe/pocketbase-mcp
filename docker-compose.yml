@@ -1,6 +1,6 @@
 # Two profiles:
 #   local    -> build image from local Dockerfile
-#   registry -> pull prebuilt image (placeholder tag below)
+#   registry -> pull ghcr.io/touexe/pocketbase-mcp:latest
 #
 # Usage:
 #   docker compose --profile local up --build

@@ -86,14 +86,18 @@ a non-root user, and contains no build tools.
 `.github/workflows/docker-release.yml`, which builds `linux/amd64` and
 `linux/arm64` and pushes to GHCR:
 ```bash
-docker run --rm -p 8000:8000 --env-file .env ghcr.io/touexe/pocketbase-mcp:latest
+docker run -d --name pocketbase-mcp -p 8000:8000 --env-file .env \
+  ghcr.io/touexe/pocketbase-mcp:latest
 ```
 Tags: `latest`, the full version (`1.0.0`), `1.0`, and `1`.
+
+Read the logs with `docker logs -f pocketbase-mcp`. Stop and remove the
+container with `docker rm -f pocketbase-mcp`.
 
 **Build it yourself:**
 ```bash
 docker build -t pocketbase-mcp .
-docker run --rm -p 8000:8000 --env-file .env pocketbase-mcp
+docker run -d --name pocketbase-mcp -p 8000:8000 --env-file .env pocketbase-mcp
 ```
 
 **docker-compose** has two profiles:
@@ -116,7 +120,8 @@ PocketBase in the same compose network and use its service name.
 **To override the default flag** (for example, to bind a different port), append
 the arguments:
 ```bash
-docker run --rm -p 9000:9000 -e POCKETBASE_MCP_PORT=9000 --env-file .env pocketbase-mcp --http
+docker run -d --name pocketbase-mcp-9000 -p 9000:9000 -e POCKETBASE_MCP_PORT=9000 \
+  --env-file .env ghcr.io/touexe/pocketbase-mcp:latest --http
 ```
 
 ## One Identity Per Process
