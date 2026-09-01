@@ -25,8 +25,8 @@ services:
 
   mcp-registry:
     profiles: ["registry"]
-    # PLACEHOLDER — replace with real registry path and tag
-    image: registry.example.com/your-org/pocketbase-mcp:latest
+    # Published by .github/workflows/docker-release.yml on every GitHub release.
+    image: ghcr.io/touexe/pocketbase-mcp:latest
     env_file: .env
     environment:
       POCKETBASE_MCP_HOST: 0.0.0.0

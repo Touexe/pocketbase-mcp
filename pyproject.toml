@@ -1,6 +1,6 @@
 [project]
 name = "pocketbase-mcp"
-version = "0.1.0"
+version = "1.0.0"
 description = "MCP server exposing PocketBase through 13 intent-first tools."
 requires-python = ">=3.11"
 dependencies = [

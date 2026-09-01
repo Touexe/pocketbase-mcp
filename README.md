@@ -82,7 +82,15 @@ only transport that works in a container, because the stdio transport needs the
 MCP client to start the process itself. The image binds `0.0.0.0:8000`, runs as
 a non-root user, and contains no build tools.
 
-**Build and run:**
+**Pull the published image.** Every GitHub release triggers
+`.github/workflows/docker-release.yml`, which builds `linux/amd64` and
+`linux/arm64` and pushes to GHCR:
+```bash
+docker run --rm -p 8000:8000 --env-file .env ghcr.io/touexe/pocketbase-mcp:latest
+```
+Tags: `latest`, the full version (`1.0.0`), `1.0`, and `1`.
+
+**Build it yourself:**
 ```bash
 docker build -t pocketbase-mcp .
 docker run --rm -p 8000:8000 --env-file .env pocketbase-mcp
@@ -91,7 +99,7 @@ docker run --rm -p 8000:8000 --env-file .env pocketbase-mcp
 **docker-compose** has two profiles:
 ```bash
 docker compose --profile local up --build      # build from the local Dockerfile
-docker compose --profile registry up           # pull a prebuilt image (edit the placeholder tag first)
+docker compose --profile registry up           # pull ghcr.io/touexe/pocketbase-mcp:latest
 ```
 
 Both services read the variables from `.env` (`POCKETBASE_URL`,
