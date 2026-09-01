@@ -25,6 +25,92 @@ uv sync
 | `POCKETBASE_LOG_PAGE_SIZE_MAX` | `500` | Max page size for `read_logs` |
 | `POCKETBASE_BATCH_LIMIT` | `200` | Max operations per `bulk_write` call |
 
+## Tools
+
+13 intent-first tools. Each one returns `{"ok": true, "data": …, "hint"?: …}` on
+success or `{"ok": false, "error_type": …, "message": …, "hint": …}` on failure.
+The `hint` names the next tool to call or the step that fixes the error. The
+`Kind` column marks each tool **R** read-only, **I** idempotent, or **D**
+destructive.
+
+### Always registered (11)
+
+| Tool | Kind | Purpose | Key parameters |
+|------|------|---------|----------------|
+| `describe_schema` | R | Inventory every collection (name, id, type, field count) | `refresh` |
+| `describe_collection` | R | Full field defs, types, `required`, relation targets, `select` values, API rules, indexes for one collection | `collection` |
+| `find_records` | R | Query/look up records — by id, or `filter_template` + `filter_params`; paged by default | `collection`, `record_id`, `filter_template`, `filter_params`, `expand`, `fields`, `sort`, `page`, `per_page`, `fetch_all` |
+| `write_record` | I | Create or update one record; the server validates the payload against the cached schema first | `collection`, `action` (`create`/`update`), `data`, `record_id`, `expand` |
+| `bulk_write` | — | Many writes as one atomic transaction | `operations[]` (`{collection, action: create/update/upsert/delete, data?, record_id?}`) — cap `POCKETBASE_BATCH_LIMIT` |
+| `manage_collection` | I | Create or alter a collection (base / auth / view) | `action`, `name`, `collection_type`, `fields`, `view_query`, `api_rules`, `indexes` |
+| `connect` | — | Check or switch the process identity | `as_` (`status`/`superuser`/`user`/`impersonate`), `collection`, `email`, `password`, `user_id` |
+| `manage_auth` | — | Auth lifecycle: password reset, verification, email change, token refresh | `action`, `collection`, `email`, `token`, `new_email`, `password`, `password_confirm` |
+| `manage_files` | — | File on a record: get URL, download bytes, upload local file | `action` (`url`/`download`/`upload`), `collection`, `record_id`, `field`, `filename`, `local_path`, `thumb` |
+| `inspect_server` | R | Health, settings summary, cron list, log stats (non-health sections need superuser) | _(none)_ |
+| `read_logs` | R | Request log entries (superuser only) | `log_id`, `filter_template`, `filter_params`, `page`, `per_page` |
+
+### Destructive — opt-in only (2)
+
+The server registers these two only when `POCKETBASE_ENABLE_DESTRUCTIVE` is set.
+Each one requires a confirmation argument that must match the current state, so
+you cannot run the call without first checking what it will affect.
+
+| Tool | Kind | Purpose | Key parameters |
+|------|------|---------|----------------|
+| `delete_records` | D | Permanently delete records. IRREVERSIBLE | `collection`, `confirm_count` (must equal resolved count), `record_ids` **or** `filter_template` + `filter_params` |
+| `destroy_collection` | D | `delete` drops the collection + data; `truncate` keeps schema, drops rows | `action`, `name`, `confirm_name` (must equal `name`) |
+
+### Resource & prompts
+
+- Resource `pocketbase://schema` — all collections (id, name, type, field_count).
+- Prompts: `inspect_then_query`, `safe_delete`, `create_with_validation`.
+
+## Skills
+
+`skills/pocketbase-mcp-tools/SKILL.md` is an agent skill that teaches an MCP
+client to use these tools correctly. It covers the inspect-then-act order,
+filter templates instead of string interpolation, pagination limits, the
+complex-query grammar (relation traversal, `?=` any-of, API-rule shapes), and
+the confirmation steps for destructive tools. Point your agent at the file, or
+copy it into the client's skills directory. It gives better tool use than the
+tool docstrings alone.
+
+## Docker
+
+The image runs the **HTTP transport** (`pocketbase-mcp --http`). This is the
+only transport that works in a container, because the stdio transport needs the
+MCP client to start the process itself. The image binds `0.0.0.0:8000`, runs as
+a non-root user, and contains no build tools.
+
+**Build and run:**
+```bash
+docker build -t pocketbase-mcp .
+docker run --rm -p 8000:8000 --env-file .env pocketbase-mcp
+```
+
+**docker-compose** has two profiles:
+```bash
+docker compose --profile local up --build      # build from the local Dockerfile
+docker compose --profile registry up           # pull a prebuilt image (edit the placeholder tag first)
+```
+
+Both services read the variables from `.env` (`POCKETBASE_URL`,
+`POCKETBASE_ADMIN_EMAIL`, `POCKETBASE_ADMIN_PASSWORD`,
+`POCKETBASE_ENABLE_DESTRUCTIVE`, and the rest) and set
+`POCKETBASE_MCP_HOST=0.0.0.0` and `POCKETBASE_MCP_PORT=8000`.
+
+**To reach a PocketBase server on the host:** inside the container, `127.0.0.1`
+points at the container itself, not the host. Set
+`POCKETBASE_URL=http://host.docker.internal:8090`. On Linux, also add
+`--add-host=host.docker.internal:host-gateway` to `docker run`. Or run
+PocketBase in the same compose network and use its service name.
+
+**To override the default flag** (for example, to bind a different port), append
+the arguments:
+```bash
+docker run --rm -p 9000:9000 -e POCKETBASE_MCP_PORT=9000 --env-file .env pocketbase-mcp --http
+```
+
 ## One Identity Per Process
 
 **This server carries exactly one PocketBase identity.** The `pypocketbase` client writes the auth token into a single shared `aiohttp` session. Calling `connect(as_='user', ...)` changes the identity for **all** subsequent calls in the session.
