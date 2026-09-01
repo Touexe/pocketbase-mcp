@@ -1,0 +1,13 @@
+{
+  "eval_id": 9,
+  "eval_name": "relation-traversal-date-sort",
+  "prompt": "In our PocketBase, look at the 'team_challenges' collection. I want every entry that was solved AND was a first blood, where the linked challenge's difficulty is 'hard', and that was solved before 03:00 UTC on 2026-08-16. Give me the team name and challenge name for each, ordered by solve time earliest first.",
+  "assertions": [
+    "Uses a single find_records filter_template that references challenge.difficulty (relation-field traversal), not two separate queries stitched together in prose",
+    "Filter combines is_solved, is_first_blood, the challenge.difficulty check, and a solved_at upper bound, all via {:placeholder} params",
+    "Passes expand covering both challenge and team so names (not ids) can be reported",
+    "Sorts by solved_at ascending via the sort parameter, not by re-ordering results afterward",
+    "Final answer lists exactly the 10 gold rows with correct team+challenge pairing and no extras",
+    "Rows are in ascending solve-time order matching the gold ordering"
+  ]
+}

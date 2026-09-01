@@ -1,0 +1,36 @@
+{
+  "expectations": [
+    {
+      "text": "Creates collection with fields owner (relation to players, required), title (text, required), secret (text)",
+      "passed": true,
+      "evidence": "manage_collection create; describe_collection confirms owner rel->pbc_3072146508 required, title text required, secret text optional"
+    },
+    {
+      "text": "Sets list and view rules to \"\" (empty string = fully public), NOT null and NOT a non-empty expression",
+      "passed": true,
+      "evidence": "api_rules.list == \"\" and api_rules.view == \"\" in persisted schema"
+    },
+    {
+      "text": "Sets the create rule to an 'any authenticated user' expression such as @request.auth.id != \"\"",
+      "passed": true,
+      "evidence": "api_rules.create == '@request.auth.id != \"\"'"
+    },
+    {
+      "text": "Sets both update and delete rules to an owner check owner = @request.auth.id",
+      "passed": true,
+      "evidence": "api_rules.update == api_rules.delete == 'owner = @request.auth.id'"
+    },
+    {
+      "text": "After the run describe_collection shows list/view = \"\", create requires auth, update/delete owner-scoped",
+      "passed": true,
+      "evidence": "verified directly against the live schema"
+    },
+    {
+      "text": "Reports the five rule values back to the user",
+      "passed": true,
+      "evidence": "report table lists all five with effect column, plus the \"\" vs null note"
+    }
+  ],
+  "passed": 6,
+  "total": 6
+}

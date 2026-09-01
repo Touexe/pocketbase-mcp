@@ -1,0 +1,25 @@
+{
+  "note": "PocketBase state after all 8 with_skill runs, captured before re-seeding for baseline batch.",
+  "mcpskill_create": [{"title": "hello", "body": "", "pinned": true}],
+  "mcpskill_update": [
+    {"title": "Alpha", "points": 500, "active": false, "difficulty": "easy"},
+    {"title": "Bravo", "points": 200, "active": true, "difficulty": "medium"},
+    {"title": "Charlie", "points": 300, "active": true, "difficulty": "hard"}
+  ],
+  "mcpskill_delete": [
+    {"title": "Keep One", "points": 100, "active": true},
+    {"title": "Keep Two", "points": 200, "active": true}
+  ],
+  "mcpskill_bulk": [
+    {"title": "Pwn 1", "points": 100, "difficulty": "easy", "active": true},
+    {"title": "Pwn 2", "points": 200, "difficulty": "medium", "active": true},
+    {"title": "Pwn 3", "points": 300, "difficulty": "medium", "active": true},
+    {"title": "Pwn 4", "points": 400, "difficulty": "hard", "active": true},
+    {"title": "Pwn 5", "points": 500, "difficulty": "hard", "active": true}
+  ],
+  "mcpskill_bulkmix": [
+    {"title": "Batch A", "points": 20, "difficulty": "easy", "active": true},
+    {"title": "Batch B", "points": 30, "difficulty": "easy", "active": true},
+    {"title": "Seed One", "points": 99, "difficulty": "easy", "active": true}
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "eval_id": 3,
+  "eval_name": "list-schema-views",
+  "prompt": "Give me an inventory of every collection in our PocketBase, and tell me which ones are views rather than base or auth collections.",
+  "assertions": [
+    "Calls describe_schema",
+    "Answer names all 5 view collections: team_challenges_flags, _players_attempts, _team_players_stats, _dashboard_metrics, _submission_stats",
+    "Does not misclassify _superusers or admins as views (they are auth)",
+    "Makes no write/update/delete/schema-change tool calls"
+  ]
+}

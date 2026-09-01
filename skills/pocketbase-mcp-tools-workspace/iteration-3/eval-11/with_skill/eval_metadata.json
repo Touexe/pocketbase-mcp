@@ -1,0 +1,12 @@
+{
+  "eval_id": 11,
+  "eval_name": "no-aggregation-large-set-judgment",
+  "prompt": "In PocketBase, across the whole 'submissions' collection: how many are correct vs incorrect, and which single player submitted the most incorrect flags? Give me that player's name and their incorrect count.",
+  "assertions": [
+    "Obtains the correct (539) and incorrect (3164) counts without fetching all rows - e.g. per_page=1 and reading total_items, or an equivalent cheap count",
+    "Acknowledges (in the answer or its approach) that PocketBase filters cannot group/aggregate, so the per-player tally must be done client-side",
+    "When pulling the incorrect rows for tallying, restricts the payload (fields projection to id/submitted_by, or paging) instead of a blind full expand that would dump ~3000 fat records into context",
+    "Resolves the top submitter's id to a human name with a follow-up players lookup rather than reporting a raw record id",
+    "Final answer: correct=539, incorrect=3164, top player 'ANG OUSA' with 156 incorrect submissions"
+  ]
+}

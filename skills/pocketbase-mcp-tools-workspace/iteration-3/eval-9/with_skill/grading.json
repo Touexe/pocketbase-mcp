@@ -1,0 +1,36 @@
+{
+  "expectations": [
+    {
+      "text": "Uses a single find_records filter_template that references challenge.difficulty (relation-field traversal), not two separate queries stitched together in prose",
+      "passed": true,
+      "evidence": "call 6 single filter with challenge.difficulty = {:d}"
+    },
+    {
+      "text": "Filter combines is_solved, is_first_blood, the challenge.difficulty check, and a solved_at upper bound, all via {:placeholder} params",
+      "passed": true,
+      "evidence": "filter_params={s:true, d:hard, e:'', t:'2026-08-16 03:00:00'} - every value incl the null-guard empty string is a placeholder"
+    },
+    {
+      "text": "Passes expand covering both challenge and team so names (not ids) can be reported",
+      "passed": true,
+      "evidence": "expand=challenge,team"
+    },
+    {
+      "text": "Sorts by solved_at ascending via the sort parameter, not by re-ordering results afterward",
+      "passed": true,
+      "evidence": "sort=solved_at"
+    },
+    {
+      "text": "Final answer lists exactly the 10 gold rows with correct team+challenge pairing and no extras",
+      "passed": true,
+      "evidence": "table matches gold exactly, total=10"
+    },
+    {
+      "text": "Rows are in ascending solve-time order matching the gold ordering",
+      "passed": true,
+      "evidence": "order matches gold 1..10"
+    }
+  ],
+  "passed": 6,
+  "total": 6
+}

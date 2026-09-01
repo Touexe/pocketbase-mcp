@@ -1,0 +1,36 @@
+{
+  "expectations": [
+    {
+      "text": "Uses one find_records call with a parenthesised OR group for the two categories combined via && with the other conditions",
+      "passed": true,
+      "evidence": "call 6: (category = {:c1} || category = {:c2}) && ..."
+    },
+    {
+      "text": "Expresses the score window as two comparisons (>= lower and < upper), not a single equality or a client-side filter",
+      "passed": true,
+      "evidence": "score >= {:lo} && score < {:hi}"
+    },
+    {
+      "text": "Every value in the filter is passed through filter_params placeholders, not interpolated into the template string",
+      "passed": true,
+      "evidence": "filter_params={c1,c2,d,lo,hi} - includes d:true"
+    },
+    {
+      "text": "Uses a compound sort '-score,name' (descending score, then ascending name) via the sort parameter",
+      "passed": true,
+      "evidence": "sort=-score,name"
+    },
+    {
+      "text": "Final answer is exactly the 7 gold rows in the gold order",
+      "passed": true,
+      "evidence": "CEO, Cyber Cafe, I Own You, The Great Pivot, The Last Resolver, The Matrix, Broke guy"
+    },
+    {
+      "text": "is_dynamic filter is applied server-side (the result excludes El Dictador, which is web/500 but not dynamic)",
+      "passed": true,
+      "evidence": "El Dictador absent"
+    }
+  ],
+  "passed": 6,
+  "total": 6
+}

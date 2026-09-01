@@ -1,0 +1,31 @@
+{
+  "expectations": [
+    {
+      "text": "Obtains the correct (539) and incorrect (3164) counts without fetching all rows - e.g. per_page=1 and reading total_items, or an equivalent cheap count",
+      "passed": true,
+      "evidence": "calls 6-7: per_page=1 fields=id, read total_items"
+    },
+    {
+      "text": "Acknowledges (in the answer or its approach) that PocketBase filters cannot group/aggregate, so the per-player tally must be done client-side",
+      "passed": true,
+      "evidence": "tallied submitted_by client-side via jq"
+    },
+    {
+      "text": "When pulling the incorrect rows for tallying, restricts the payload (fields projection to id/submitted_by, or paging) instead of a blind full expand that would dump ~3000 fat records into context",
+      "passed": true,
+      "evidence": "fields=id,submitted_by (still overflowed to a spill file, but projection was narrow, no expand)"
+    },
+    {
+      "text": "Resolves the top submitter's id to a human name with a follow-up players lookup rather than reporting a raw record id",
+      "passed": true,
+      "evidence": "find_records players record_id=hg2u4hwlcs8d3d9 -> ANG OUSA"
+    },
+    {
+      "text": "Final answer: correct=539, incorrect=3164, top player 'ANG OUSA' with 156 incorrect submissions",
+      "passed": true,
+      "evidence": "exact match"
+    }
+  ],
+  "passed": 5,
+  "total": 5
+}

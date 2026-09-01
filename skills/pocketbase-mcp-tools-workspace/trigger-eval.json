@@ -1,0 +1,22 @@
+[
+  {"query": "using the pocketbase mcp, pull every order in the `orders` collection where status is 'shipped' and total > 200, sorted newest first — and expand the customer relation so i get their email", "should_trigger": true},
+  {"query": "i've got the pocketbase mcp server connected to our staging instance. add a `priority` select field (low/med/high) to the `tickets` collection and change the update rule so only the assignee can edit a ticket", "should_trigger": true},
+  {"query": "which team in the team_challenges collection has the most first-blood solves? the data's in our ctf pocketbase, use the mcp tools", "should_trigger": true},
+  {"query": "delete all the draft posts from pocketbase — should be around 12 of them. count them first and show me before you actually remove anything", "should_trigger": true},
+  {"query": "connect to pocketbase as superuser and pull the last 50 error-level entries from the request logs", "should_trigger": true},
+  {"query": "through the pocketbase mcp, insert these 40 rows into `inventory` as a single atomic batch so the whole thing rolls back if any row fails validation", "should_trigger": true},
+  {"query": "is my pocketbase instance up? check the health endpoint and tell me which cron jobs are registered", "should_trigger": true},
+  {"query": "find the pocketbase `users` record with email jane@acme.co and bump her plan field to 'enterprise', then confirm it saved", "should_trigger": true},
+  {"query": "upload ./assets/cover.jpg into the `image` field of post record abc123xyz in pocketbase and hand me back the public file url", "should_trigger": true},
+  {"query": "set up a `comments` collection in our pocketbase with a relation to posts and a relation to users, cascade delete on, public read but only logged-in users can post", "should_trigger": true},
+  {"query": "how do i filter records with the pocketbase python client? i'm calling `pb.collection('posts').get_list()` with a ParamsList and my filter string isn't binding the params", "should_trigger": false},
+  {"query": "write a migration in my pocketbase Go app that adds a composite index on (team_id, created) to the events table", "should_trigger": false},
+  {"query": "my browser pocketbase JS SDK call `pb.collection('users').authWithPassword(email, pw)` keeps throwing a 400 — what am i doing wrong", "should_trigger": false},
+  {"query": "help me sketch the collections and fields i'd need for a music queue app — tracks, votes, playback sessions, that kind of thing. just on paper, nothing to build yet", "should_trigger": false},
+  {"query": "how do i self-host pocketbase behind caddy with a docker-compose setup and automatic https?", "should_trigger": false},
+  {"query": "we're a 4-person saas — is pocketbase or supabase the better backend choice for us long term?", "should_trigger": false},
+  {"query": "query my supabase `profiles` table for every user that signed up this week and group them by referral source", "should_trigger": false},
+  {"query": "run a raw SQL query against my local analytics.sqlite file to count rows per category and dump it to csv", "should_trigger": false},
+  {"query": "in the pb-mcp repo, add a new FastMCP tool to server.py that wraps the /api/backups endpoint and register it alongside the others", "should_trigger": false},
+  {"query": "conceptually, what's the difference between a pocketbase list rule and a view rule, and when would they differ?", "should_trigger": false}
+]

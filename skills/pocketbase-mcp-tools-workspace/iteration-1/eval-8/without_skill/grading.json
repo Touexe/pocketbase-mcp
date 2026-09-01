@@ -1,0 +1,26 @@
+{
+  "expectations": [
+    {
+      "text": "Resolves the 'Seed One' record id with find_records before building the batch",
+      "passed": true,
+      "evidence": "find_records title={:n} Seed One -> cj5acn1uptr565n (after a first attempt with invalid field 'name' returned 400)"
+    },
+    {
+      "text": "Uses a single bulk_write call whose operations include 2 creates and 1 update",
+      "passed": true,
+      "evidence": "bulk_write 3 ops: create BatchA, create BatchB, update"
+    },
+    {
+      "text": "After the run mcpskill_bulkmix has exactly 3 rows",
+      "passed": true,
+      "evidence": "db check: 3 rows"
+    },
+    {
+      "text": "'Seed One' has points=99 after the run; 'Batch A' has 20 and 'Batch B' has 30",
+      "passed": true,
+      "evidence": "db check matches"
+    }
+  ],
+  "passed": 4,
+  "total": 4
+}

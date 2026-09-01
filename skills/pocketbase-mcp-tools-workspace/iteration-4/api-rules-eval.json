@@ -1,0 +1,20 @@
+{
+  "skill_name": "pocketbase-mcp-tools",
+  "note": "Iteration 4 - one eval exercising api_rules via manage_collection. Write eval on a fresh mcpskill_rules collection; drop it after.",
+  "evals": [
+    {
+      "id": 12,
+      "name": "api-rules-public-read-owner-write",
+      "prompt": "In our PocketBase create a base collection called 'mcpskill_rules' with these fields: owner (a required relation to the players collection), title (text, required), and secret (text). Set the access rules so that: anyone can list and view records; only a logged-in user can create; and only the record's owner can update or delete it. When you're done, show me the exact rules you set.",
+      "files": [],
+      "assertions": [
+        "Creates collection 'mcpskill_rules' via manage_collection with fields owner (relation to players, required), title (text, required), and secret (text)",
+        "Sets the list and view rules to \"\" (empty string = fully public), NOT null and NOT a non-empty expression",
+        "Sets the create rule to an 'any authenticated user' expression such as @request.auth.id != \"\" (not \"\" and not null)",
+        "Sets both the update and delete rules to an owner check, i.e. owner = @request.auth.id",
+        "After the run, describe_collection('mcpskill_rules') shows api_rules where list and view are \"\", create requires auth, and update/delete are owner-scoped",
+        "Reports the five rule values it set back to the user"
+      ]
+    }
+  ]
+}

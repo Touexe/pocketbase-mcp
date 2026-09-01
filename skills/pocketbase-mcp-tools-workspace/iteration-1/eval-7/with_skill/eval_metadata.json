@@ -1,0 +1,11 @@
+{
+  "eval_id": 7,
+  "eval_name": "bulk-insert-atomic",
+  "prompt": "Add these 5 challenges to the 'mcpskill_bulk' collection in PocketBase, all in one atomic batch: 'Pwn 1' (100 pts, easy), 'Pwn 2' (200 pts, medium), 'Pwn 3' (300 pts, medium), 'Pwn 4' (400 pts, hard), 'Pwn 5' (500 pts, hard). All active.",
+  "assertions": [
+    "Uses one bulk_write call for all 5 inserts rather than 5 individual write_record calls",
+    "All 5 operations are action=\"create\" against collection mcpskill_bulk",
+    "After the run mcpskill_bulk contains exactly 5 rows with titles Pwn 1..Pwn 5 and matching points 100/200/300/400/500",
+    "Each row has active=true and the stated difficulty"
+  ]
+}

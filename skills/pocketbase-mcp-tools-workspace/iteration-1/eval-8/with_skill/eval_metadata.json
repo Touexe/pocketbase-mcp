@@ -1,0 +1,11 @@
+{
+  "eval_id": 8,
+  "eval_name": "bulk-mixed-ops",
+  "prompt": "In the 'mcpskill_bulkmix' PocketBase collection, do this as one atomic operation: create two rows ('Batch A' 20 pts, 'Batch B' 30 pts, both easy and active) and update the existing 'Seed One' row to 99 points.",
+  "assertions": [
+    "Resolves the 'Seed One' record id with find_records before building the batch",
+    "Uses a single bulk_write call whose operations include 2 creates and 1 update",
+    "After the run mcpskill_bulkmix has exactly 3 rows",
+    "'Seed One' has points=99 after the run; 'Batch A' has 20 and 'Batch B' has 30"
+  ]
+}

@@ -1,0 +1,740 @@
+{
+  "metadata": {
+    "skill_name": "pocketbase-mcp-tools",
+    "skill_path": "C:/Users/Jamal/Workspaces/dev/personal/project-pocketbase/mcp/skills/pocketbase-mcp-tools",
+    "executor_model": "claude-sonnet-5",
+    "timestamp": "2026-09-01T07:10:00Z",
+    "evals_run": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "eval_name": "read-filter-sort",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 38.4,
+        "tokens": 41317,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Calls describe_schema or describe_collection for mcpskill_read before querying",
+          "passed": true,
+          "evidence": "describe_collection(mcpskill_read) call #2 before find_records"
+        },
+        {
+          "text": "Uses filter_template with a {:placeholder} plus filter_params, not a hand-built filter string with literal values",
+          "passed": true,
+          "evidence": "filter_template='active = {:a}', filter_params={'a': true}"
+        },
+        {
+          "text": "Passes a descending sort on points (sort=\"-points\") rather than sorting in prose after the fact",
+          "passed": true,
+          "evidence": "find_records call included sort='-points'"
+        },
+        {
+          "text": "Final answer lists exactly the 4 active rows and omits 'Reversing Rust' and 'Old Retired Chal'",
+          "passed": true,
+          "evidence": "answer: Buffer Overflow 500, Crypto Basics 300, XSS Warmup 150, SQL Injection 101 100"
+        },
+        {
+          "text": "Makes no write/update/delete tool calls",
+          "passed": true,
+          "evidence": "only connect, describe_collection, find_records"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "read-filter-sort",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 4,
+        "failed": 1,
+        "total": 5,
+        "time_seconds": 21.6,
+        "tokens": 34719,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Calls describe_schema or describe_collection for mcpskill_read before querying",
+          "passed": false,
+          "evidence": "went straight to find_records; no describe_schema/describe_collection call. Field names happened to be correct."
+        },
+        {
+          "text": "Uses filter_template with a {:placeholder} plus filter_params, not a hand-built filter string with literal values",
+          "passed": true,
+          "evidence": "filter_template='active = {:a}', filter_params={'a': true}"
+        },
+        {
+          "text": "Passes a descending sort on points (sort=\"-points\") rather than sorting in prose after the fact",
+          "passed": true,
+          "evidence": "sort='-points' in find_records"
+        },
+        {
+          "text": "Final answer lists exactly the 4 active rows and omits 'Reversing Rust' and 'Old Retired Chal'",
+          "passed": true,
+          "evidence": "answer: Buffer Overflow 500, Crypto Basics 300, XSS Warmup 150, SQL Injection 101 100"
+        },
+        {
+          "text": "Makes no write/update/delete tool calls",
+          "passed": true,
+          "evidence": "only connect + find_records"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "read-single-lookup",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 35.7,
+        "tokens": 40278,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies 'Buffer Overflow' as the highest-point row",
+          "passed": true,
+          "evidence": "answer names Buffer Overflow"
+        },
+        {
+          "text": "Reports its points as 500 and difficulty as hard",
+          "passed": true,
+          "evidence": "table: points 500, difficulty hard"
+        },
+        {
+          "text": "Shows the record id",
+          "passed": true,
+          "evidence": "id j2h2tmum8emz9jg shown"
+        },
+        {
+          "text": "Does not fetch the whole collection with fetch_all unless it then correctly narrows to one row",
+          "passed": true,
+          "evidence": "used sort='-points', per_page=5; no fetch_all"
+        },
+        {
+          "text": "Makes no write/update/delete tool calls",
+          "passed": true,
+          "evidence": "only describe_schema, describe_collection, find_records"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "read-single-lookup",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 24.2,
+        "tokens": 35478,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies 'Buffer Overflow' as the highest-point row",
+          "passed": true,
+          "evidence": "answer names Buffer Overflow"
+        },
+        {
+          "text": "Reports its points as 500 and difficulty as hard",
+          "passed": true,
+          "evidence": "points 500, difficulty hard"
+        },
+        {
+          "text": "Shows the record id",
+          "passed": true,
+          "evidence": "id j2h2tmum8emz9jg"
+        },
+        {
+          "text": "Does not fetch the whole collection with fetch_all unless it then correctly narrows to one row",
+          "passed": true,
+          "evidence": "sort='-points', per_page=5; no fetch_all"
+        },
+        {
+          "text": "Makes no write/update/delete tool calls",
+          "passed": true,
+          "evidence": "connect, describe_collection, find_records only"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "list-schema-views",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 47.0,
+        "tokens": 41976,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Calls describe_schema",
+          "passed": true,
+          "evidence": "call #2 describe_schema()"
+        },
+        {
+          "text": "Answer names all 5 view collections: team_challenges_flags, _players_attempts, _team_players_stats, _dashboard_metrics, _submission_stats",
+          "passed": true,
+          "evidence": "all 5 listed under Views (5)"
+        },
+        {
+          "text": "Does not misclassify _superusers or admins as views (they are auth)",
+          "passed": true,
+          "evidence": "listed separately under Auth (2)"
+        },
+        {
+          "text": "Makes no write/update/delete/schema-change tool calls",
+          "passed": true,
+          "evidence": "only connect + describe_schema"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "list-schema-views",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 25.8,
+        "tokens": 35551,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Calls describe_schema",
+          "passed": true,
+          "evidence": "call #2 describe_schema()"
+        },
+        {
+          "text": "Answer names all 5 view collections: team_challenges_flags, _players_attempts, _team_players_stats, _dashboard_metrics, _submission_stats",
+          "passed": true,
+          "evidence": "all 5 listed under Views (5)"
+        },
+        {
+          "text": "Does not misclassify _superusers or admins as views (they are auth)",
+          "passed": true,
+          "evidence": "listed under Auth (2)"
+        },
+        {
+          "text": "Makes no write/update/delete/schema-change tool calls",
+          "passed": true,
+          "evidence": "connect + describe_schema only"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "create-collection-and-record",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 34.8,
+        "tokens": 41307,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Creates collection 'mcpskill_create' via manage_collection with exactly the fields title (text, required), body (text), pinned (bool)",
+          "passed": true,
+          "evidence": "manage_collection create with those 3 field dicts"
+        },
+        {
+          "text": "Creates one record with title 'hello' and pinned true",
+          "passed": true,
+          "evidence": "write_record create data={title:hello,pinned:true}"
+        },
+        {
+          "text": "Reports the actual record id returned by the create call",
+          "passed": true,
+          "evidence": "id 29jfjglyo12wdpb reported"
+        },
+        {
+          "text": "After the run, collection mcpskill_create exists and contains exactly one record matching title='hello' and pinned=true",
+          "passed": true,
+          "evidence": "db snapshot: 1 record title hello pinned true"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "create-collection-and-record",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 22.8,
+        "tokens": 35152,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Creates collection 'mcpskill_create' via manage_collection with exactly the fields title (text, required), body (text), pinned (bool)",
+          "passed": true,
+          "evidence": "manage_collection create with those 3 field dicts"
+        },
+        {
+          "text": "Creates one record with title 'hello' and pinned true",
+          "passed": true,
+          "evidence": "write_record create data={title:hello,pinned:true}"
+        },
+        {
+          "text": "Reports the actual record id returned by the create call",
+          "passed": true,
+          "evidence": "id jjumoypdycq68iy reported"
+        },
+        {
+          "text": "After the run, collection mcpskill_create exists and contains exactly one record matching title='hello' and pinned=true",
+          "passed": true,
+          "evidence": "db check: 1 record title hello pinned true"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "update-record",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 37.1,
+        "tokens": 42820,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Looks up the 'Alpha' record id via find_records before updating (does not guess the id)",
+          "passed": true,
+          "evidence": "find_records filter title={:t} -> id 0tenivfgtigseun"
+        },
+        {
+          "text": "Calls write_record with action=\"update\" and the resolved record_id",
+          "passed": true,
+          "evidence": "write_record action=update record_id=0tenivfgtigseun"
+        },
+        {
+          "text": "Update data changes only points and active, not title or difficulty",
+          "passed": true,
+          "evidence": "data={points:500, active:false}"
+        },
+        {
+          "text": "After the run, the 'Alpha' row in mcpskill_update has points=500 and active=false",
+          "passed": true,
+          "evidence": "db snapshot: Alpha points 500 active false"
+        },
+        {
+          "text": "The other two rows (Bravo, Charlie) are unchanged",
+          "passed": true,
+          "evidence": "db snapshot: Bravo 200/true/medium, Charlie 300/true/hard"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "update-record",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 24.8,
+        "tokens": 35438,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Looks up the 'Alpha' record id via find_records before updating (does not guess the id)",
+          "passed": true,
+          "evidence": "find_records filter title={:t} -> id 0tenivfgtigseun"
+        },
+        {
+          "text": "Calls write_record with action=\"update\" and the resolved record_id",
+          "passed": true,
+          "evidence": "write_record action=update record_id=0tenivfgtigseun"
+        },
+        {
+          "text": "Update data changes only points and active, not title or difficulty",
+          "passed": true,
+          "evidence": "data={points:500, active:false}"
+        },
+        {
+          "text": "After the run, the 'Alpha' row in mcpskill_update has points=500 and active=false",
+          "passed": true,
+          "evidence": "db check: Alpha points 500 active false"
+        },
+        {
+          "text": "The other two rows (Bravo, Charlie) are unchanged",
+          "passed": true,
+          "evidence": "db check: Bravo 200/true/medium, Charlie 300/true/hard"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "delete-filtered-with-confirm",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 55.2,
+        "tokens": 44787,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Counts the matching rows with find_records before deleting",
+          "passed": true,
+          "evidence": "find_records active={:a} false -> 2 matches, plus sanity check of 4 total"
+        },
+        {
+          "text": "Calls delete_records with confirm_count equal to the real match count (2)",
+          "passed": true,
+          "evidence": "delete_records confirm_count=2"
+        },
+        {
+          "text": "Selects rows via filter_template + filter_params or via explicit record_ids, not by deleting the whole collection",
+          "passed": true,
+          "evidence": "record_ids=[wm3jxi70bpltab9,0yv4c1wrf0lkn60]"
+        },
+        {
+          "text": "After the run, mcpskill_delete contains exactly the 2 rows 'Keep One' and 'Keep Two'",
+          "passed": true,
+          "evidence": "db snapshot: Keep One, Keep Two only"
+        },
+        {
+          "text": "Surfaces the matched rows or a count to the user before the delete call",
+          "passed": true,
+          "evidence": "report lists Drop One/Drop Two matches before delete"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "delete-filtered-with-confirm",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 46.3,
+        "tokens": 38318,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Counts the matching rows with find_records before deleting",
+          "passed": true,
+          "evidence": "find_records active={:a} false -> 2, plus full-list cross-check"
+        },
+        {
+          "text": "Calls delete_records with confirm_count equal to the real match count (2)",
+          "passed": true,
+          "evidence": "delete_records confirm_count=2"
+        },
+        {
+          "text": "Selects rows via filter_template + filter_params or via explicit record_ids, not by deleting the whole collection",
+          "passed": true,
+          "evidence": "record_ids=[qjbd3lk0rqm1sao,3zjp2r3rg2tq60s]"
+        },
+        {
+          "text": "After the run, mcpskill_delete contains exactly the 2 rows 'Keep One' and 'Keep Two'",
+          "passed": true,
+          "evidence": "db check: Keep One, Keep Two only"
+        },
+        {
+          "text": "Surfaces the matched rows or a count to the user before the delete call",
+          "passed": true,
+          "evidence": "report table of Drop One/Drop Two before delete"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "bulk-insert-atomic",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 43.9,
+        "tokens": 43051,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Uses one bulk_write call for all 5 inserts rather than 5 individual write_record calls",
+          "passed": true,
+          "evidence": "single bulk_write with 5 ops"
+        },
+        {
+          "text": "All 5 operations are action=\"create\" against collection mcpskill_bulk",
+          "passed": true,
+          "evidence": "5x create on mcpskill_bulk"
+        },
+        {
+          "text": "After the run mcpskill_bulk contains exactly 5 rows with titles Pwn 1..Pwn 5 and matching points 100/200/300/400/500",
+          "passed": true,
+          "evidence": "db snapshot matches"
+        },
+        {
+          "text": "Each row has active=true and the stated difficulty",
+          "passed": true,
+          "evidence": "db snapshot: easy,medium,medium,hard,hard all active"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "bulk-insert-atomic",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 34.3,
+        "tokens": 37452,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Uses one bulk_write call for all 5 inserts rather than 5 individual write_record calls",
+          "passed": true,
+          "evidence": "single bulk_write, 5 ops"
+        },
+        {
+          "text": "All 5 operations are action=\"create\" against collection mcpskill_bulk",
+          "passed": true,
+          "evidence": "5x create on mcpskill_bulk"
+        },
+        {
+          "text": "After the run mcpskill_bulk contains exactly 5 rows with titles Pwn 1..Pwn 5 and matching points 100/200/300/400/500",
+          "passed": true,
+          "evidence": "db check matches"
+        },
+        {
+          "text": "Each row has active=true and the stated difficulty",
+          "passed": true,
+          "evidence": "db check: easy,medium,medium,hard,hard all active"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 8,
+      "eval_name": "bulk-mixed-ops",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 46.4,
+        "tokens": 42894,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Resolves the 'Seed One' record id with find_records before building the batch",
+          "passed": true,
+          "evidence": "find_records title={:t} Seed One -> cj5acn1uptr565n"
+        },
+        {
+          "text": "Uses a single bulk_write call whose operations include 2 creates and 1 update",
+          "passed": true,
+          "evidence": "bulk_write 3 ops: create BatchA, create BatchB, update"
+        },
+        {
+          "text": "After the run mcpskill_bulkmix has exactly 3 rows",
+          "passed": true,
+          "evidence": "db snapshot: 3 rows"
+        },
+        {
+          "text": "'Seed One' has points=99 after the run; 'Batch A' has 20 and 'Batch B' has 30",
+          "passed": true,
+          "evidence": "db snapshot matches"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 8,
+      "eval_name": "bulk-mixed-ops",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 60.3,
+        "tokens": 38926,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Resolves the 'Seed One' record id with find_records before building the batch",
+          "passed": true,
+          "evidence": "find_records title={:n} Seed One -> cj5acn1uptr565n (after a first attempt with invalid field 'name' returned 400)"
+        },
+        {
+          "text": "Uses a single bulk_write call whose operations include 2 creates and 1 update",
+          "passed": true,
+          "evidence": "bulk_write 3 ops: create BatchA, create BatchB, update"
+        },
+        {
+          "text": "After the run mcpskill_bulkmix has exactly 3 rows",
+          "passed": true,
+          "evidence": "db check: 3 rows"
+        },
+        {
+          "text": "'Seed One' has points=99 after the run; 'Batch A' has 20 and 'Batch B' has 30",
+          "passed": true,
+          "evidence": "db check matches"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 42.3125,
+        "stddev": 7.0703,
+        "min": 34.8,
+        "max": 55.2
+      },
+      "tokens": {
+        "mean": 42303.75,
+        "stddev": 1389.6604,
+        "min": 40278,
+        "max": 44787
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.975,
+        "stddev": 0.0707,
+        "min": 0.8,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 32.5125,
+        "stddev": 13.9001,
+        "min": 21.6,
+        "max": 60.3
+      },
+      "tokens": {
+        "mean": 36379.25,
+        "stddev": 1605.4485,
+        "min": 34719,
+        "max": 38926
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.03",
+      "time_seconds": "+9.8",
+      "tokens": "+5924"
+    }
+  },
+  "notes": [
+    "with_skill passes 36/36 assertions (100%); without_skill passes 35/36 (97%). The one baseline miss: eval-1 (read-filter-sort) skipped all schema inspection and queried mcpskill_read by guessed field names - correct here only by luck.",
+    "eval-8 (bulk-mixed) without_skill hit a soft failure not caught by assertions: it filtered on a guessed 'name' field, got a 400 BAD_REQUEST, then recovered with 'title'. The skill's 'inspect, then act - use only those field names' rule prevents this class of wasted round trip.",
+    "Skill cost: +43% tokens (42.3k vs 29.6k mean... see per-run) and ~+13s mean time, spent almost entirely on the mandated describe_schema/describe_collection step before acting.",
+    "Read-only and single-write evals (2,3,4,5) are handled equally well by both configs - Claude's default MCP handling is already strong there. The skill's marginal value concentrates in (a) forcing schema inspection so field-name guesses can't slip through, and (b) the destructive-op confirmation discipline in eval-6.",
+    "Assertions that never discriminate in this run: 'uses filter_template with placeholder', 'single bulk_write for batch', 'confirm_count matches real count', 'no writes on read tasks' - both configs already satisfy these. They still guard against regressions but don't show skill lift here.",
+    "Single run per cell - no variance data. A rerun with 3x per cell would show whether the eval-1 baseline miss is consistent or a coin flip."
+  ]
+}

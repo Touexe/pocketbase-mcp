@@ -1,0 +1,12 @@
+{
+  "eval_id": 2,
+  "eval_name": "read-single-lookup",
+  "prompt": "In PocketBase, what's the single highest-point challenge in 'mcpskill_read'? Show me all of its field values.",
+  "assertions": [
+    "Identifies 'Buffer Overflow' as the highest-point row",
+    "Reports its points as 500 and difficulty as hard",
+    "Shows the record id",
+    "Does not fetch the whole collection with fetch_all unless it then correctly narrows to one row",
+    "Makes no write/update/delete tool calls"
+  ]
+}

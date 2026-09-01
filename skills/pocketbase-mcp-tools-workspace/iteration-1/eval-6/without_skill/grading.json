@@ -1,0 +1,31 @@
+{
+  "expectations": [
+    {
+      "text": "Counts the matching rows with find_records before deleting",
+      "passed": true,
+      "evidence": "find_records active={:a} false -> 2, plus full-list cross-check"
+    },
+    {
+      "text": "Calls delete_records with confirm_count equal to the real match count (2)",
+      "passed": true,
+      "evidence": "delete_records confirm_count=2"
+    },
+    {
+      "text": "Selects rows via filter_template + filter_params or via explicit record_ids, not by deleting the whole collection",
+      "passed": true,
+      "evidence": "record_ids=[qjbd3lk0rqm1sao,3zjp2r3rg2tq60s]"
+    },
+    {
+      "text": "After the run, mcpskill_delete contains exactly the 2 rows 'Keep One' and 'Keep Two'",
+      "passed": true,
+      "evidence": "db check: Keep One, Keep Two only"
+    },
+    {
+      "text": "Surfaces the matched rows or a count to the user before the delete call",
+      "passed": true,
+      "evidence": "report table of Drop One/Drop Two before delete"
+    }
+  ],
+  "passed": 5,
+  "total": 5
+}

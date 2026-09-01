@@ -1,0 +1,31 @@
+{
+  "expectations": [
+    {
+      "text": "Identifies 'Buffer Overflow' as the highest-point row",
+      "passed": true,
+      "evidence": "answer names Buffer Overflow"
+    },
+    {
+      "text": "Reports its points as 500 and difficulty as hard",
+      "passed": true,
+      "evidence": "points 500, difficulty hard"
+    },
+    {
+      "text": "Shows the record id",
+      "passed": true,
+      "evidence": "id j2h2tmum8emz9jg"
+    },
+    {
+      "text": "Does not fetch the whole collection with fetch_all unless it then correctly narrows to one row",
+      "passed": true,
+      "evidence": "sort='-points', per_page=5; no fetch_all"
+    },
+    {
+      "text": "Makes no write/update/delete tool calls",
+      "passed": true,
+      "evidence": "connect, describe_collection, find_records only"
+    }
+  ],
+  "passed": 5,
+  "total": 5
+}

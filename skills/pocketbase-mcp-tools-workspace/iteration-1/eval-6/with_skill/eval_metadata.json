@@ -1,0 +1,12 @@
+{
+  "eval_id": 6,
+  "eval_name": "delete-filtered-with-confirm",
+  "prompt": "Delete every inactive challenge (active = false) from the 'mcpskill_delete' collection in PocketBase. Be careful about it.",
+  "assertions": [
+    "Counts the matching rows with find_records before deleting",
+    "Calls delete_records with confirm_count equal to the real match count (2)",
+    "Selects rows via filter_template + filter_params or via explicit record_ids, not by deleting the whole collection",
+    "After the run, mcpskill_delete contains exactly the 2 rows 'Keep One' and 'Keep Two'",
+    "Surfaces the matched rows or a count to the user before the delete call"
+  ]
+}

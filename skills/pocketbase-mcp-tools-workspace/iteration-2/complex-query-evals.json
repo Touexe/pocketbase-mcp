@@ -1,0 +1,50 @@
+{
+  "skill_name": "pocketbase-mcp-tools",
+  "note": "Iteration 2 - complex query focus. Read-only against the real CTF-platform data. Gold answers computed 2026-09-01.",
+  "evals": [
+    {
+      "id": 9,
+      "name": "relation-traversal-date-sort",
+      "prompt": "In our PocketBase, look at the 'team_challenges' collection. I want every entry that was solved AND was a first blood, where the linked challenge's difficulty is 'hard', and that was solved before 03:00 UTC on 2026-08-16. Give me the team name and challenge name for each, ordered by solve time earliest first.",
+      "expected_output": "One find_records call with a filter that traverses the challenge relation (challenge.difficulty = {:d}), combines is_solved, is_first_blood, and a solved_at date-string comparison, uses expand=challenge,team, and sort=solved_at. Gold: exactly 10 rows in this order - Never Busy for You/ACCD, Behind/AmbokOps, Cyber Cafe/NO NAME, The Machine/Little Cannon, Electric cut/NO NAME, Daily/R0mdu0l$3nCh3y, The Great Pivot/R0mdu0l$3nCh3y, Forged Alliance/Hort Mes, Three Sessions, One Intruder/DF4, The Matrix/យុវជនប្រាក់រៀល.",
+      "files": [],
+      "assertions": [
+        "Uses a single find_records filter_template that references challenge.difficulty (relation-field traversal), not two separate queries stitched together in prose",
+        "Filter combines is_solved, is_first_blood, the challenge.difficulty check, and a solved_at upper bound, all via {:placeholder} params",
+        "Passes expand covering both challenge and team so names (not ids) can be reported",
+        "Sorts by solved_at ascending via the sort parameter, not by re-ordering results afterward",
+        "Final answer lists exactly the 10 gold rows with correct team+challenge pairing and no extras",
+        "Rows are in ascending solve-time order matching the gold ordering"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "grouped-or-numeric-range-compound-sort",
+      "prompt": "From the 'challenges' collection in PocketBase, give me every challenge that is in category web or pwn, is dynamic, and has a score of at least 300 but under 550. Sort by score high to low, then by name A-Z. I want name, category, and score.",
+      "expected_output": "One find_records call, filter_template like '(category = {:c1} || category = {:c2}) && is_dynamic = {:d} && score >= {:lo} && score < {:hi}', sort='-score,name'. Gold: 7 rows in order - CEO/web/500, Cyber Cafe/web/500, I Own You/pwn/500, The Great Pivot/pwn/500, The Last Resolver/pwn/500, The Matrix/pwn/500, Broke guy/web/498.",
+      "files": [],
+      "assertions": [
+        "Uses one find_records call with a parenthesised OR group for the two categories combined via && with the other conditions",
+        "Expresses the score window as two comparisons (>= lower and < upper), not a single equality or a client-side filter",
+        "Every value in the filter is passed through filter_params placeholders, not interpolated into the template string",
+        "Uses a compound sort '-score,name' (descending score, then ascending name) via the sort parameter",
+        "Final answer is exactly the 7 gold rows in the gold order",
+        "is_dynamic filter is applied server-side (the result excludes El Dictador, which is web/500 but not dynamic)"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "no-aggregation-large-set-judgment",
+      "prompt": "In PocketBase, across the whole 'submissions' collection: how many are correct vs incorrect, and which single player submitted the most incorrect flags? Give me that player's name and their incorrect count.",
+      "expected_output": "Gets the two totals cheaply (per_page=1, read total_items) rather than downloading rows: correct=539, incorrect=3164. Recognizes PocketBase has no GROUP BY, so to find the top player it fetches only a narrow projection (id + submitted_by) of the incorrect rows - ideally paging or fields-limited - aggregates client-side, then resolves the winning player id to a name via a second lookup. Gold: player 'ANG OUSA', 156 incorrect submissions.",
+      "files": [],
+      "assertions": [
+        "Obtains the correct (539) and incorrect (3164) counts without fetching all rows - e.g. per_page=1 and reading total_items, or an equivalent cheap count",
+        "Acknowledges (in the answer or its approach) that PocketBase filters cannot group/aggregate, so the per-player tally must be done client-side",
+        "When pulling the incorrect rows for tallying, restricts the payload (fields projection to id/submitted_by, or paging) instead of a blind full expand that would dump ~3000 fat records into context",
+        "Resolves the top submitter's id to a human name with a follow-up players lookup rather than reporting a raw record id",
+        "Final answer: correct=539, incorrect=3164, top player 'ANG OUSA' with 156 incorrect submissions"
+      ]
+    }
+  ]
+}

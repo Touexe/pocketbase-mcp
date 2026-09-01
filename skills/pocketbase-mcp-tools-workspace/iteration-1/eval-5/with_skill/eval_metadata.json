@@ -1,0 +1,12 @@
+{
+  "eval_id": 5,
+  "eval_name": "update-record",
+  "prompt": "In the 'mcpskill_update' collection in PocketBase, find the challenge titled 'Alpha' and change its points to 500 and set active to false. Confirm what you changed.",
+  "assertions": [
+    "Looks up the 'Alpha' record id via find_records before updating (does not guess the id)",
+    "Calls write_record with action=\"update\" and the resolved record_id",
+    "Update data changes only points and active, not title or difficulty",
+    "After the run, the 'Alpha' row in mcpskill_update has points=500 and active=false",
+    "The other two rows (Bravo, Charlie) are unchanged"
+  ]
+}

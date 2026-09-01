@@ -1,0 +1,355 @@
+{
+  "metadata": {
+    "skill_name": "pocketbase-mcp-tools",
+    "executor_model": "claude-sonnet-5",
+    "timestamp": "2026-09-01T09:00:00Z",
+    "evals_run": [
+      9,
+      10,
+      11
+    ],
+    "runs_per_configuration": 1,
+    "focus": "iteration 3 - complex queries, after adding the Complex queries section"
+  },
+  "runs": [
+    {
+      "eval_id": 9,
+      "eval_name": "relation-traversal-date-sort",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 63.5,
+        "tokens": 49069,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Uses a single find_records filter_template that references challenge.difficulty (relation-field traversal), not two separate queries stitched together in prose",
+          "passed": true,
+          "evidence": "call 6 single filter with challenge.difficulty = {:d}"
+        },
+        {
+          "text": "Filter combines is_solved, is_first_blood, the challenge.difficulty check, and a solved_at upper bound, all via {:placeholder} params",
+          "passed": true,
+          "evidence": "filter_params={s:true, d:hard, e:'', t:'2026-08-16 03:00:00'} - every value incl the null-guard empty string is a placeholder"
+        },
+        {
+          "text": "Passes expand covering both challenge and team so names (not ids) can be reported",
+          "passed": true,
+          "evidence": "expand=challenge,team"
+        },
+        {
+          "text": "Sorts by solved_at ascending via the sort parameter, not by re-ordering results afterward",
+          "passed": true,
+          "evidence": "sort=solved_at"
+        },
+        {
+          "text": "Final answer lists exactly the 10 gold rows with correct team+challenge pairing and no extras",
+          "passed": true,
+          "evidence": "table matches gold exactly, total=10"
+        },
+        {
+          "text": "Rows are in ascending solve-time order matching the gold ordering",
+          "passed": true,
+          "evidence": "order matches gold 1..10"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 9,
+      "eval_name": "relation-traversal-date-sort",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 69.1,
+        "tokens": 41246,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Uses a single find_records filter_template that references challenge.difficulty (relation-field traversal), not two separate queries stitched together in prose",
+          "passed": true,
+          "evidence": "call 5 single filter with challenge.difficulty = {:d}"
+        },
+        {
+          "text": "Filter combines is_solved, is_first_blood, the challenge.difficulty check, and a solved_at upper bound, all via {:placeholder} params",
+          "passed": true,
+          "evidence": "d and t parametrized; bool conditions and the != \"\" guard written inline (idiomatic, no value-injection surface)"
+        },
+        {
+          "text": "Passes expand covering both challenge and team so names (not ids) can be reported",
+          "passed": true,
+          "evidence": "expand=team,challenge"
+        },
+        {
+          "text": "Sorts by solved_at ascending via the sort parameter, not by re-ordering results afterward",
+          "passed": true,
+          "evidence": "sort=solved_at"
+        },
+        {
+          "text": "Final answer lists exactly the 10 gold rows with correct team+challenge pairing and no extras",
+          "passed": true,
+          "evidence": "table matches gold, total=10"
+        },
+        {
+          "text": "Rows are in ascending solve-time order matching the gold ordering",
+          "passed": true,
+          "evidence": "order matches gold"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 10,
+      "eval_name": "grouped-or-numeric-range-compound-sort",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 69.1,
+        "tokens": 47608,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Uses one find_records call with a parenthesised OR group for the two categories combined via && with the other conditions",
+          "passed": true,
+          "evidence": "call 6: (category = {:c1} || category = {:c2}) && ..."
+        },
+        {
+          "text": "Expresses the score window as two comparisons (>= lower and < upper), not a single equality or a client-side filter",
+          "passed": true,
+          "evidence": "score >= {:lo} && score < {:hi}"
+        },
+        {
+          "text": "Every value in the filter is passed through filter_params placeholders, not interpolated into the template string",
+          "passed": true,
+          "evidence": "filter_params={c1,c2,d,lo,hi} - includes d:true"
+        },
+        {
+          "text": "Uses a compound sort '-score,name' (descending score, then ascending name) via the sort parameter",
+          "passed": true,
+          "evidence": "sort=-score,name"
+        },
+        {
+          "text": "Final answer is exactly the 7 gold rows in the gold order",
+          "passed": true,
+          "evidence": "CEO, Cyber Cafe, I Own You, The Great Pivot, The Last Resolver, The Matrix, Broke guy"
+        },
+        {
+          "text": "is_dynamic filter is applied server-side (the result excludes El Dictador, which is web/500 but not dynamic)",
+          "passed": true,
+          "evidence": "El Dictador absent"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 10,
+      "eval_name": "grouped-or-numeric-range-compound-sort",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 61.5,
+        "tokens": 40139,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Uses one find_records call with a parenthesised OR group for the two categories combined via && with the other conditions",
+          "passed": true,
+          "evidence": "call 4 same shape"
+        },
+        {
+          "text": "Expresses the score window as two comparisons (>= lower and < upper), not a single equality or a client-side filter",
+          "passed": true,
+          "evidence": "score >= {:lo} && score < {:hi}"
+        },
+        {
+          "text": "Every value in the filter is passed through filter_params placeholders, not interpolated into the template string",
+          "passed": true,
+          "evidence": "c1,c2,lo,hi parametrized; is_dynamic = true written inline (bool literal)"
+        },
+        {
+          "text": "Uses a compound sort '-score,name' (descending score, then ascending name) via the sort parameter",
+          "passed": true,
+          "evidence": "sort=-score,name"
+        },
+        {
+          "text": "Final answer is exactly the 7 gold rows in the gold order",
+          "passed": true,
+          "evidence": "matches gold order"
+        },
+        {
+          "text": "is_dynamic filter is applied server-side (the result excludes El Dictador, which is web/500 but not dynamic)",
+          "passed": true,
+          "evidence": "El Dictador absent"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 11,
+      "eval_name": "no-aggregation-large-set-judgment",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 152.4,
+        "tokens": 71682,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Obtains the correct (539) and incorrect (3164) counts without fetching all rows - e.g. per_page=1 and reading total_items, or an equivalent cheap count",
+          "passed": true,
+          "evidence": "calls 5-6 per_page=1 fields=id; also cross-checked _submission_stats view"
+        },
+        {
+          "text": "Acknowledges (in the answer or its approach) that PocketBase filters cannot group/aggregate, so the per-player tally must be done client-side",
+          "passed": true,
+          "evidence": "tallied submitted_by client-side; consulted the _submission_stats view for the totals"
+        },
+        {
+          "text": "When pulling the incorrect rows for tallying, restricts the payload (fields projection to id/submitted_by, or paging) instead of a blind full expand that would dump ~3000 fat records into context",
+          "passed": true,
+          "evidence": "fields=id,submitted_by; tried per_page 500 then 200 then fetch_all - narrow projection throughout, no expand"
+        },
+        {
+          "text": "Resolves the top submitter's id to a human name with a follow-up players lookup rather than reporting a raw record id",
+          "passed": true,
+          "evidence": "find_records players record_id=hg2u4hwlcs8d3d9 -> ANG OUSA"
+        },
+        {
+          "text": "Final answer: correct=539, incorrect=3164, top player 'ANG OUSA' with 156 incorrect submissions",
+          "passed": true,
+          "evidence": "exact match"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 11,
+      "eval_name": "no-aggregation-large-set-judgment",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 105.1,
+        "tokens": 48111,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Obtains the correct (539) and incorrect (3164) counts without fetching all rows - e.g. per_page=1 and reading total_items, or an equivalent cheap count",
+          "passed": true,
+          "evidence": "per_page=1 total_items on status-filtered calls"
+        },
+        {
+          "text": "Acknowledges (in the answer or its approach) that PocketBase filters cannot group/aggregate, so the per-player tally must be done client-side",
+          "passed": true,
+          "evidence": "aggregated with jq | sort | uniq -c offline"
+        },
+        {
+          "text": "When pulling the incorrect rows for tallying, restricts the payload (fields projection to id/submitted_by, or paging) instead of a blind full expand that would dump ~3000 fat records into context",
+          "passed": true,
+          "evidence": "fields=id,submitted_by, no expand; still overflowed"
+        },
+        {
+          "text": "Resolves the top submitter's id to a human name with a follow-up players lookup rather than reporting a raw record id",
+          "passed": true,
+          "evidence": "resolved via players -> ANG OUSA"
+        },
+        {
+          "text": "Final answer: correct=539, incorrect=3164, top player 'ANG OUSA' with 156 incorrect submissions",
+          "passed": true,
+          "evidence": "exact match"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 95.0,
+        "stddev": 49.7887,
+        "min": 63.5,
+        "max": 152.4
+      },
+      "tokens": {
+        "mean": 56119.6667,
+        "stddev": 13497.1588,
+        "min": 47608,
+        "max": 71682
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 78.5667,
+        "stddev": 23.2906,
+        "min": 61.5,
+        "max": 105.1
+      },
+      "tokens": {
+        "mean": 43165.3333,
+        "stddev": 4318.6892,
+        "min": 40139,
+        "max": 48111
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.00",
+      "time_seconds": "+16.4",
+      "tokens": "+12954"
+    }
+  },
+  "notes": [
+    "Iteration 3: same 3 complex-query evals, run against the SKILL.md that now has a Complex queries section (operators, relation traversal, id-in-projection, expand size, per_page cap, no-aggregation / check-for-a-view).",
+    "Both configs 17/17 assertions this run; both produced every correct final answer. with_skill went from 16/17 (iter2) to 17/17 - the iter2 regression (eval 9 inlining 'hard' and the datetime as literals) is fixed: iter3 with_skill parametrized every value including the null-guard empty string ({:e}).",
+    "Qualitative gains the assertions don't fully score: (a) eval 10 with_skill kept 'id' in the fields projection from the first call and never hit the ~200-error; the baseline still fired the projection without 'id', ate the error, and retried. (b) eval 11 with_skill consulted the _submission_stats VIEW for the totals (skill now says to look for a *_stats view first); the baseline computed everything from raw rows.",
+    "Still not solved by the skill: the big-fetch context blow-up in eval 11. Even a narrow id+submitted_by projection over 3164 rows exceeds the MCP result token cap at per_page>=200, so the run spills to a file and aggregates with jq. That is arguably fine (it recovers and answers correctly) but the skill could say plainly: for a client-side tally over thousands of rows, expect the result to spill to a file and plan to post-process it.",
+    "Cost: with_skill mean 56.1k tok / 95s, baseline 43.2k tok / 78.6s. The skill's inspect-first + view-checking habit adds calls up front; on eval 11 with_skill still finished in fewer tool calls than baseline (19 vs 15 -- wait, more: 19 vs 15) but comparable wall time. n=1 per cell, treat directionally.",
+    "Recommendation: the section is doing its job on evals 9-10. For eval 11, tighten the 'large / grouped results' subsection with the file-spill expectation, and consider adding per_page<=150 as the practical projection page size."
+  ]
+}

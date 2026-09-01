@@ -1,0 +1,36 @@
+# Two profiles:
+#   local    -> build image from local Dockerfile
+#   registry -> pull prebuilt image (placeholder tag below)
+#
+# Usage:
+#   docker compose --profile local up --build
+#   docker compose --profile registry up
+#
+# Both services share env via .env (POCKETBASE_URL, POCKETBASE_ADMIN_*, ...).
+
+services:
+  mcp-local:
+    profiles: ["local"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pocketbase-mcp:local
+    env_file: .env
+    environment:
+      POCKETBASE_MCP_HOST: 0.0.0.0
+      POCKETBASE_MCP_PORT: 8000
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  mcp-registry:
+    profiles: ["registry"]
+    # PLACEHOLDER — replace with real registry path and tag
+    image: registry.example.com/your-org/pocketbase-mcp:latest
+    env_file: .env
+    environment:
+      POCKETBASE_MCP_HOST: 0.0.0.0
+      POCKETBASE_MCP_PORT: 8000
+    ports:
+      - "8000:8000"
+    restart: unless-stopped

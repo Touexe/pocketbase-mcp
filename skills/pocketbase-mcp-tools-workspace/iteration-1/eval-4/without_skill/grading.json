@@ -1,0 +1,26 @@
+{
+  "expectations": [
+    {
+      "text": "Creates collection 'mcpskill_create' via manage_collection with exactly the fields title (text, required), body (text), pinned (bool)",
+      "passed": true,
+      "evidence": "manage_collection create with those 3 field dicts"
+    },
+    {
+      "text": "Creates one record with title 'hello' and pinned true",
+      "passed": true,
+      "evidence": "write_record create data={title:hello,pinned:true}"
+    },
+    {
+      "text": "Reports the actual record id returned by the create call",
+      "passed": true,
+      "evidence": "id jjumoypdycq68iy reported"
+    },
+    {
+      "text": "After the run, collection mcpskill_create exists and contains exactly one record matching title='hello' and pinned=true",
+      "passed": true,
+      "evidence": "db check: 1 record title hello pinned true"
+    }
+  ],
+  "passed": 4,
+  "total": 4
+}

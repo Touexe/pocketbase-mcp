@@ -1,0 +1,11 @@
+{
+  "eval_id": 4,
+  "eval_name": "create-collection-and-record",
+  "prompt": "In our PocketBase, create a new base collection called 'mcpskill_create' with these fields: title (text, required), body (text), pinned (bool). Then add one record: title 'hello', pinned true. Tell me the new record's id.",
+  "assertions": [
+    "Creates collection 'mcpskill_create' via manage_collection with exactly the fields title (text, required), body (text), pinned (bool)",
+    "Creates one record with title 'hello' and pinned true",
+    "Reports the actual record id returned by the create call",
+    "After the run, collection mcpskill_create exists and contains exactly one record matching title='hello' and pinned=true"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "eval_id": 1,
+  "eval_name": "read-filter-sort",
+  "prompt": "Using our PocketBase, list every active challenge in the 'mcpskill_read' collection (active = true), sorted by points from highest to lowest. Give me each title with its points.",
+  "assertions": [
+    "Calls describe_schema or describe_collection for mcpskill_read before querying",
+    "Uses filter_template with a {:placeholder} plus filter_params, not a hand-built filter string with literal values",
+    "Passes a descending sort on points (sort=\"-points\") rather than sorting in prose after the fact",
+    "Final answer lists exactly the 4 active rows and omits 'Reversing Rust' and 'Old Retired Chal'",
+    "Makes no write/update/delete tool calls"
+  ]
+}

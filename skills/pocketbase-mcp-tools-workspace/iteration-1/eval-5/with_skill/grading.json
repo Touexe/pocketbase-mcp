@@ -1,0 +1,31 @@
+{
+  "expectations": [
+    {
+      "text": "Looks up the 'Alpha' record id via find_records before updating (does not guess the id)",
+      "passed": true,
+      "evidence": "find_records filter title={:t} -> id 0tenivfgtigseun"
+    },
+    {
+      "text": "Calls write_record with action=\"update\" and the resolved record_id",
+      "passed": true,
+      "evidence": "write_record action=update record_id=0tenivfgtigseun"
+    },
+    {
+      "text": "Update data changes only points and active, not title or difficulty",
+      "passed": true,
+      "evidence": "data={points:500, active:false}"
+    },
+    {
+      "text": "After the run, the 'Alpha' row in mcpskill_update has points=500 and active=false",
+      "passed": true,
+      "evidence": "db snapshot: Alpha points 500 active false"
+    },
+    {
+      "text": "The other two rows (Bravo, Charlie) are unchanged",
+      "passed": true,
+      "evidence": "db snapshot: Bravo 200/true/medium, Charlie 300/true/hard"
+    }
+  ],
+  "passed": 5,
+  "total": 5
+}

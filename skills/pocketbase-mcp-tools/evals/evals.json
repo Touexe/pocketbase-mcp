@@ -1,0 +1,113 @@
+{
+  "skill_name": "pocketbase-mcp-tools",
+  "evals": [
+    {
+      "id": 1,
+      "name": "read-filter-sort",
+      "prompt": "Using our PocketBase, list every active challenge in the 'mcpskill_read' collection (active = true), sorted by points from highest to lowest. Give me each title with its points.",
+      "expected_output": "Discovers schema, then find_records with filter_template=\"active = {:a}\" / filter_params={\"a\": true} and sort=\"-points\". Reports exactly: Buffer Overflow 500, Crypto Basics 300, XSS Warmup 150, SQL Injection 101 100. Excludes the two inactive rows. No writes.",
+      "files": [],
+      "assertions": [
+        "Calls describe_schema or describe_collection for mcpskill_read before querying",
+        "Uses filter_template with a {:placeholder} plus filter_params, not a hand-built filter string with literal values",
+        "Passes a descending sort on points (sort=\"-points\") rather than sorting in prose after the fact",
+        "Final answer lists exactly the 4 active rows and omits 'Reversing Rust' and 'Old Retired Chal'",
+        "Makes no write/update/delete tool calls"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "read-single-lookup",
+      "prompt": "In PocketBase, what's the single highest-point challenge in 'mcpskill_read'? Show me all of its field values.",
+      "expected_output": "find_records with sort=\"-points\" and per_page=1 (or fetch_all then pick max). Identifies 'Buffer Overflow', points 500, difficulty hard, active true, and shows the id. No writes.",
+      "files": [],
+      "assertions": [
+        "Identifies 'Buffer Overflow' as the highest-point row",
+        "Reports its points as 500 and difficulty as hard",
+        "Shows the record id",
+        "Does not fetch the whole collection with fetch_all unless it then correctly narrows to one row",
+        "Makes no write/update/delete tool calls"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "list-schema-views",
+      "prompt": "Give me an inventory of every collection in our PocketBase, and tell me which ones are views rather than base or auth collections.",
+      "expected_output": "describe_schema(), then reports the collection list and names the 5 view collections: team_challenges_flags, _players_attempts, _team_players_stats, _dashboard_metrics, _submission_stats. Read-only.",
+      "files": [],
+      "assertions": [
+        "Calls describe_schema",
+        "Answer names all 5 view collections: team_challenges_flags, _players_attempts, _team_players_stats, _dashboard_metrics, _submission_stats",
+        "Does not misclassify _superusers or admins as views (they are auth)",
+        "Makes no write/update/delete/schema-change tool calls"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "create-collection-and-record",
+      "prompt": "In our PocketBase, create a new base collection called 'mcpskill_create' with these fields: title (text, required), body (text), pinned (bool). Then add one record: title 'hello', pinned true. Tell me the new record's id.",
+      "expected_output": "connect as superuser if needed, manage_collection(action=\"create\", collection_type=\"base\", fields=[...]) with the three field dicts, then write_record(action=\"create\", data={\"title\":\"hello\",\"pinned\":true}). Returns the created record id.",
+      "files": [],
+      "assertions": [
+        "Creates collection 'mcpskill_create' via manage_collection with exactly the fields title (text, required), body (text), pinned (bool)",
+        "Creates one record with title 'hello' and pinned true",
+        "Reports the actual record id returned by the create call",
+        "After the run, collection mcpskill_create exists and contains exactly one record matching title='hello' and pinned=true"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "update-record",
+      "prompt": "In the 'mcpskill_update' collection in PocketBase, find the challenge titled 'Alpha' and change its points to 500 and set active to false. Confirm what you changed.",
+      "expected_output": "find_records with filter_template=\"title = {:t}\" to get Alpha's id, then write_record(action=\"update\", record_id=..., data={\"points\":500,\"active\":false}). Confirms the id and the two changed fields.",
+      "files": [],
+      "assertions": [
+        "Looks up the 'Alpha' record id via find_records before updating (does not guess the id)",
+        "Calls write_record with action=\"update\" and the resolved record_id",
+        "Update data changes only points and active, not title or difficulty",
+        "After the run, the 'Alpha' row in mcpskill_update has points=500 and active=false",
+        "The other two rows (Bravo, Charlie) are unchanged"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "delete-filtered-with-confirm",
+      "prompt": "Delete every inactive challenge (active = false) from the 'mcpskill_delete' collection in PocketBase. Be careful about it.",
+      "expected_output": "find_records(fetch_all=True, fields=\"id\", filter on active = {:a} / false) to get the exact count (2), surfaces the matches, then delete_records with the same filter_template and confirm_count=2. Ends with 2 rows remaining (Keep One, Keep Two).",
+      "files": [],
+      "assertions": [
+        "Counts the matching rows with find_records before deleting",
+        "Calls delete_records with confirm_count equal to the real match count (2)",
+        "Selects rows via filter_template + filter_params or via explicit record_ids, not by deleting the whole collection",
+        "After the run, mcpskill_delete contains exactly the 2 rows 'Keep One' and 'Keep Two'",
+        "Surfaces the matched rows or a count to the user before the delete call"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "bulk-insert-atomic",
+      "prompt": "Add these 5 challenges to the 'mcpskill_bulk' collection in PocketBase, all in one atomic batch: 'Pwn 1' (100 pts, easy), 'Pwn 2' (200 pts, medium), 'Pwn 3' (300 pts, medium), 'Pwn 4' (400 pts, hard), 'Pwn 5' (500 pts, hard). All active.",
+      "expected_output": "A single bulk_write call with 5 create operations (not 5 separate write_record calls). After the run mcpskill_bulk holds all 5 rows with the right points and difficulty.",
+      "files": [],
+      "assertions": [
+        "Uses one bulk_write call for all 5 inserts rather than 5 individual write_record calls",
+        "All 5 operations are action=\"create\" against collection mcpskill_bulk",
+        "After the run mcpskill_bulk contains exactly 5 rows with titles Pwn 1..Pwn 5 and matching points 100/200/300/400/500",
+        "Each row has active=true and the stated difficulty"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "bulk-mixed-ops",
+      "prompt": "In the 'mcpskill_bulkmix' PocketBase collection, do this as one atomic operation: create two rows ('Batch A' 20 pts, 'Batch B' 30 pts, both easy and active) and update the existing 'Seed One' row to 99 points.",
+      "expected_output": "One bulk_write whose operations list mixes 2 creates and 1 update. The update op resolves 'Seed One' id first (via find_records). After the run: 3 rows total, Seed One at 99 pts, Batch A at 20, Batch B at 30.",
+      "files": [],
+      "assertions": [
+        "Resolves the 'Seed One' record id with find_records before building the batch",
+        "Uses a single bulk_write call whose operations include 2 creates and 1 update",
+        "After the run mcpskill_bulkmix has exactly 3 rows",
+        "'Seed One' has points=99 after the run; 'Batch A' has 20 and 'Batch B' has 30"
+      ]
+    }
+  ]
+}

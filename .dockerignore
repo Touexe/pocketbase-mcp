@@ -1,0 +1,16 @@
+.venv
+.git
+.gitignore
+.env
+**/__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+tests
+openspec
+skills
+.claude
+*.md
+Dockerfile
+docker-compose.yml
+.dockerignore

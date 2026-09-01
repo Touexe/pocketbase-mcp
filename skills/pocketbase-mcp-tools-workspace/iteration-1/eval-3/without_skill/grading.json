@@ -1,0 +1,26 @@
+{
+  "expectations": [
+    {
+      "text": "Calls describe_schema",
+      "passed": true,
+      "evidence": "call #2 describe_schema()"
+    },
+    {
+      "text": "Answer names all 5 view collections: team_challenges_flags, _players_attempts, _team_players_stats, _dashboard_metrics, _submission_stats",
+      "passed": true,
+      "evidence": "all 5 listed under Views (5)"
+    },
+    {
+      "text": "Does not misclassify _superusers or admins as views (they are auth)",
+      "passed": true,
+      "evidence": "listed under Auth (2)"
+    },
+    {
+      "text": "Makes no write/update/delete/schema-change tool calls",
+      "passed": true,
+      "evidence": "connect + describe_schema only"
+    }
+  ],
+  "passed": 4,
+  "total": 4
+}

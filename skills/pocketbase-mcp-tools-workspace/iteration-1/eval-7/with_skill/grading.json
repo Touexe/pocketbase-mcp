@@ -1,0 +1,26 @@
+{
+  "expectations": [
+    {
+      "text": "Uses one bulk_write call for all 5 inserts rather than 5 individual write_record calls",
+      "passed": true,
+      "evidence": "single bulk_write with 5 ops"
+    },
+    {
+      "text": "All 5 operations are action=\"create\" against collection mcpskill_bulk",
+      "passed": true,
+      "evidence": "5x create on mcpskill_bulk"
+    },
+    {
+      "text": "After the run mcpskill_bulk contains exactly 5 rows with titles Pwn 1..Pwn 5 and matching points 100/200/300/400/500",
+      "passed": true,
+      "evidence": "db snapshot matches"
+    },
+    {
+      "text": "Each row has active=true and the stated difficulty",
+      "passed": true,
+      "evidence": "db snapshot: easy,medium,medium,hard,hard all active"
+    }
+  ],
+  "passed": 4,
+  "total": 4
+}

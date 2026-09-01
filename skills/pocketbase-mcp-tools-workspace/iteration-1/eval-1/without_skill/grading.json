@@ -1,0 +1,31 @@
+{
+  "expectations": [
+    {
+      "text": "Calls describe_schema or describe_collection for mcpskill_read before querying",
+      "passed": false,
+      "evidence": "went straight to find_records; no describe_schema/describe_collection call. Field names happened to be correct."
+    },
+    {
+      "text": "Uses filter_template with a {:placeholder} plus filter_params, not a hand-built filter string with literal values",
+      "passed": true,
+      "evidence": "filter_template='active = {:a}', filter_params={'a': true}"
+    },
+    {
+      "text": "Passes a descending sort on points (sort=\"-points\") rather than sorting in prose after the fact",
+      "passed": true,
+      "evidence": "sort='-points' in find_records"
+    },
+    {
+      "text": "Final answer lists exactly the 4 active rows and omits 'Reversing Rust' and 'Old Retired Chal'",
+      "passed": true,
+      "evidence": "answer: Buffer Overflow 500, Crypto Basics 300, XSS Warmup 150, SQL Injection 101 100"
+    },
+    {
+      "text": "Makes no write/update/delete tool calls",
+      "passed": true,
+      "evidence": "only connect + find_records"
+    }
+  ],
+  "passed": 4,
+  "total": 5
+}
